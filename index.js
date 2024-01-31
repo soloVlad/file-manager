@@ -1,8 +1,8 @@
 import { cli } from './cli.js';
-import { greet, quit } from './messageProvider.js';
+import message from './messageProvider.js';
 
 const exit = () => {
-  quit();
+  message.quit();
   process.exit();
 }
 
@@ -10,11 +10,11 @@ const operations = {
   EXIT: '.exit',
 };
 
-await greet();
+await message.greet();
+message.printPWD();
+cli.prompt();
 
 cli.on('line', (line) => {
-  console.log(`Received: ${line}`);
-
   const parts = line.split(' ');
   const operation = parts[0];
 
@@ -22,6 +22,9 @@ cli.on('line', (line) => {
     case operations.EXIT:
       exit();
   }
+
+  message.printPWD();
+  cli.prompt();
 });
 
 cli.on('SIGINT', exit);

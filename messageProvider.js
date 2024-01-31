@@ -1,18 +1,23 @@
 import { args } from './argsParser.js';
-import { cli } from './cli.js';
 import { capitalize } from './helpers.js';
+import pwd from './pwd.js';
 
 const greet = async () => {
   const usernameCapitalized = capitalize(args.username);
-  cli.write(`Welcome to the File Manager, ${usernameCapitalized}!\n`);
+  process.stdout.write(`Welcome to the File Manager, ${usernameCapitalized}!\n`);
 }
 
 const quit = () => {
   const usernameCapitalized = capitalize(args.username);
-  cli.write(`Thank you for using File Manager, ${usernameCapitalized}, goodbye!\n`)
+  process.stdout.write(`Thank you for using File Manager, ${usernameCapitalized}, goodbye!\n`)
 }
 
-export {
+const printPWD = () => {
+  process.stdout.write(`You are currently in ${pwd.get()}\n`);
+}
+
+export default {
   greet,
-  quit
+  quit,
+  printPWD
 };
