@@ -1,15 +1,9 @@
-import readline from 'node:readline/promises';
-
 import { parsedArgs } from './argsParser.js';
+import { cli } from './cli.js';
+import { printGreeting } from './greeting.js';
 
-const cli = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+await printGreeting();
 
 cli.on('line', (line) => {
   console.log(`Received: ${line}`);
 });
-
-
-console.log(parsedArgs);
