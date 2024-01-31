@@ -1,8 +1,7 @@
-import { parsedArgs } from './argsParser.js';
 import { cli } from './cli.js';
-import { printGreeting } from './greeting.js';
+import { greet } from './messageProvider.js';
 
-await printGreeting();
+await greet();
 
 cli.on('line', (line) => {
   console.log(`Received: ${line}`);
