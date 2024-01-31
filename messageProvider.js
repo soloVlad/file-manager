@@ -9,7 +9,7 @@ const greet = async () => {
 
 const quit = () => {
   const usernameCapitalized = capitalize(args.username);
-  cli.write(`Thank you for using File Manager, ${usernameCapitalized}, goodbye!`)
+  cli.write(`Thank you for using File Manager, ${usernameCapitalized}, goodbye!\n`)
 }
 
 export {
