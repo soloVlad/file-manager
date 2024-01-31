@@ -1,30 +1,11 @@
 import { cli } from './cli.js';
-import message from './messageProvider.js';
+import { exit, handleInput, prompt, start } from './operationsHandler.js';
 
-const exit = () => {
-  message.quit();
-  process.exit();
-}
-
-const operations = {
-  EXIT: '.exit',
-};
-
-await message.greet();
-message.printPWD();
-cli.prompt();
+await start();
 
 cli.on('line', (line) => {
-  const parts = line.split(' ');
-  const operation = parts[0];
-
-  switch (operation) {
-    case operations.EXIT:
-      exit();
-  }
-
-  message.printPWD();
-  cli.prompt();
+  handleInput(line);
+  prompt();
 });
 
 cli.on('SIGINT', exit);
