@@ -27,11 +27,34 @@ const cat = async (currentPath) => {
         }
       })
     );
-  } catch (err) {
+  } catch {
     errorHandler.log(ERRORS.OPERATION_FAILED);
   }
 }
 
+const add = async (fileName) => {
+  const isValidFileName = checkIsValidFileName(fileName);
+
+  if (!isValidFileName) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
+  try {
+    const filePath = pwd.resolve(fileName);
+    await fs.promises.writeFile(filePath, '');
+  } catch {
+    errorHandler.log(ERRORS.OPERATION_FAILED);
+  }
+};
+
+const checkIsValidFileName = (fileName) => {
+  const regex = /^[0-9a-zA-Z]+$/;
+
+  return regex.test(fileName);
+}
+
 export default {
   cat,
+  add,
 };

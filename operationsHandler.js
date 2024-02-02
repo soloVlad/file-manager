@@ -10,6 +10,7 @@ const operations = {
   CD: 'cd',
   LS: 'ls',
   CAT: 'cat',
+  ADD: 'add',
 };
 
 const start = async () => {
@@ -84,6 +85,15 @@ const handleInput = async (inputString) => {
       }
 
       await extfs.cat(parts[1]);
+      break;
+
+    case operations.ADD:
+      if (!checkEnoughArgs(parts, 2)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await extfs.add(parts[1]);
       break;
   }
 }
