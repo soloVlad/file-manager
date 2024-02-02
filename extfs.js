@@ -1,16 +1,23 @@
 import fs from 'fs';
 import { pipeline } from 'stream/promises';
 import { Writable } from 'stream';
+import path from 'path';
 
 import pwd, { PATH_TYPES } from './pwd.js';
 import errorHandler, { ERRORS } from './errorHandler.js';
 
-const cat = async (currentPath) => {
-  const resolvedPath = pwd.resolve(currentPath);
+const cat = async (givenPath) => {
+  const resolvedPath = pwd.resolve(givenPath);
   const isExist = await pwd.exist(resolvedPath);
+
+  if (!isExist) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
   const pathType = await pwd.getPathType(resolvedPath);
 
-  if (!isExist || pathType !== PATH_TYPES.FILE) {
+  if (pathType !== PATH_TYPES.FILE) {
     errorHandler.log(ERRORS.INVALID_INPUT);
     return;
   }
@@ -48,8 +55,34 @@ const add = async (fileName) => {
   }
 };
 
+const rename = async (filePath, newName) => {
+  const resolvedPath = pwd.resolve(filePath);
+  const isExist = await pwd.exist(resolvedPath);
+  const isNewNameValid = checkIsValidFileName(newName);
+
+  if (!isExist || !isNewNameValid) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
+  const pathType = await pwd.getPathType(resolvedPath);
+
+  if (pathType !== PATH_TYPES.FILE) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
+  const newPath = path.resolve(path.dirname(resolvedPath), newName);
+
+  try {
+    await fs.promises.rename(resolvedPath, newPath);
+  } catch {
+    errorHandler.log(ERRORS.OPERATION_FAILED);
+  }
+}
+
 const checkIsValidFileName = (fileName) => {
-  const regex = /^[0-9a-zA-Z]+$/;
+  const regex = /^[^.\/][^\/]*\.[a-zA-Z0-9]+$/i;
 
   return regex.test(fileName);
 }
@@ -57,4 +90,5 @@ const checkIsValidFileName = (fileName) => {
 export default {
   cat,
   add,
+  rename,
 };
