@@ -2,12 +2,14 @@ import message from "./messageProvider.js";
 import pwd, { PATH_TYPES } from "./pwd.js";
 import errorHandler, { ERRORS } from "./errorHandler.js";
 import { cli } from "./cli.js";
+import extfs from "./extfs.js";
 
 const operations = {
   EXIT: '.exit',
   UP: 'up',
   CD: 'cd',
   LS: 'ls',
+  CAT: 'cat',
 };
 
 const start = async () => {
@@ -73,6 +75,15 @@ const handleInput = async (inputString) => {
 
     case operations.LS:
       await pwd.ls();
+      break;
+
+    case operations.CAT:
+      if (!checkEnoughArgs(parts, 2)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await extfs.cat(parts[1]);
       break;
   }
 }

@@ -32,8 +32,7 @@ const ls = async () => {
 
   const structuredContent = await Promise.all(content.map(async (item) => {
     try {
-      const itemPath = resolve(item);
-      const itemType = await getPathType(itemPath);
+      const itemType = await getPathType(item);
 
       return {
         Name: item,
@@ -69,7 +68,7 @@ const exist = async (newPath) => {
 }
 
 const getPathType = async (newPath) => {
-  const resolvedPath = resolve(pwd, newPath);
+  const resolvedPath = resolve(newPath);
   const stats = await fs.stat(resolvedPath);
 
   if (stats.isDirectory()) {
@@ -91,4 +90,5 @@ export default {
   ls,
   exist,
   getPathType,
+  resolve,
 }

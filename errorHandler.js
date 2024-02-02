@@ -4,8 +4,7 @@ export const ERRORS = {
 };
 
 const log = (error) => {
-  process.stdout.write(ERRORS[error] ?? error);
-  process.stdout.write('\n');
+  console.log(ERRORS[error] ?? error);
 }
 
 export default {
