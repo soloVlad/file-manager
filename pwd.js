@@ -18,12 +18,12 @@ const get = () => {
 }
 
 const up = () => {
-  pwd = path.resolve(pwd, '..');
+  pwd = resolve('..');
   return pwd;
 }
 
 const cd = (newPath) => {
-  pwd = path.resolve(pwd, newPath);
+  pwd = resolve(newPath);
   return pwd;
 }
 
@@ -32,7 +32,7 @@ const ls = async () => {
 
   const structuredContent = await Promise.all(content.map(async (item) => {
     try {
-      const itemPath = path.join(pwd, item);
+      const itemPath = resolve(item);
       const itemType = await getPathType(itemPath);
 
       return {
@@ -53,9 +53,15 @@ const ls = async () => {
   console.table(filteredContent);
 }
 
+const resolve = (newPath) => {
+  return path.resolve(pwd, newPath);
+}
+
 const exist = async (newPath) => {
+  const resolvePath = resolve(newPath);
+
   try {
-    await fs.access(newPath);
+    await fs.access(resolvePath);
     return true;
   } catch {
     return false;
@@ -63,7 +69,8 @@ const exist = async (newPath) => {
 }
 
 const getPathType = async (newPath) => {
-  const stats = await fs.stat(newPath);
+  const resolvedPath = resolve(pwd, newPath);
+  const stats = await fs.stat(resolvedPath);
 
   if (stats.isDirectory()) {
     return PATH_TYPES.DIRECTORY;

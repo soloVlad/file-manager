@@ -3,7 +3,6 @@ import pwd, { PATH_TYPES } from "./pwd.js";
 import errorHandler, { ERRORS } from "./errorHandler.js";
 import { cli } from "./cli.js";
 
-
 const operations = {
   EXIT: '.exit',
   UP: 'up',
