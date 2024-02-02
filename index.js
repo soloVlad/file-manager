@@ -3,8 +3,8 @@ import { exit, handleInput, prompt, start } from './operationsHandler.js';
 
 await start();
 
-cli.on('line', (line) => {
-  handleInput(line);
+cli.on('line', async (line) => {
+  await handleInput(line);
   prompt();
 });
 
