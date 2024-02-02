@@ -1,8 +1,10 @@
 import message from "./messageProvider.js";
+import pwd from "./pwd.js";
 import { cli } from "./cli.js";
 
 const operations = {
   EXIT: '.exit',
+  UP: 'up',
 };
 
 const start = async () => {
@@ -27,6 +29,10 @@ const handleInput = (inputString) => {
   switch (operation) {
     case operations.EXIT:
       exit();
+
+    case operations.UP:
+      pwd.up();
+      break;
   }
 }
 
