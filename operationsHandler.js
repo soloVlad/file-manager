@@ -1,5 +1,5 @@
 import message from "./messageProvider.js";
-import pwd from "./pwd.js";
+import pwd, { PATH_TYPES } from "./pwd.js";
 import errorHandler, { ERRORS } from "./errorHandler.js";
 import { cli } from "./cli.js";
 
@@ -8,6 +8,7 @@ const operations = {
   EXIT: '.exit',
   UP: 'up',
   CD: 'cd',
+  LS: 'ls',
 };
 
 const start = async () => {
@@ -56,11 +57,24 @@ const handleInput = async (inputString) => {
         break;
       }
 
+      const pathType = await pwd.getPathType(newPath);
+
+      if (pathType !== PATH_TYPES.DIRECTORY) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
       try {
         pwd.cd(newPath);
       } catch {
         errorHandler.log(ERRORS.OPERATION_FAILED);
       }
+
+      break;
+
+    case operations.LS:
+      await pwd.ls();
+      break;
   }
 }
 
