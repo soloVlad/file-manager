@@ -177,6 +177,9 @@ const handleInput = async (inputString) => {
 
       await zip.decompress(parts[1], parts[2]);
       break;
+
+    default:
+      errorHandler.log(ERRORS.INVALID_INPUT);
   }
 }
 
