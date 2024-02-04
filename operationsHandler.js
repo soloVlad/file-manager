@@ -3,6 +3,7 @@ import pwd, { PATH_TYPES } from "./pwd.js";
 import errorHandler, { ERRORS } from "./errorHandler.js";
 import { cli } from "./cli.js";
 import extfs from "./extfs.js";
+import os from "./os.js";
 
 const operations = {
   EXIT: '.exit',
@@ -15,6 +16,7 @@ const operations = {
   COPY: 'cp',
   REMOVE: 'rm',
   MOVE: 'mv',
+  OS: 'os',
 };
 
 const start = async () => {
@@ -134,6 +136,15 @@ const handleInput = async (inputString) => {
       }
 
       await extfs.move(parts[1], parts[2]);
+      break;
+
+    case operations.OS:
+      if (!checkEnoughArgs(parts, 2)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await os.handleOSOperation(parts[1]);
       break;
   }
 }
