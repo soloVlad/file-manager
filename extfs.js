@@ -81,6 +81,41 @@ const rename = async (filePath, newName) => {
   }
 }
 
+const copy = async (filePath, newDirPath) => {
+  const resolvedFilePath = pwd.resolve(filePath);
+  const resolvedDirPath = pwd.resolve(newDirPath);
+  const isFileExist = await pwd.exist(resolvedFilePath);
+  const isDirExist = await pwd.exist(resolvedDirPath);
+  const isNewDir = path.dirname(resolvedFilePath) !== pwd.get();
+
+  if (!isFileExist || !isDirExist || !isNewDir) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
+  const newDirPathType = await pwd.getPathType(resolvedDirPath);
+
+  if (newDirPathType !== PATH_TYPES.DIRECTORY) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
+  const fileName = path.basename(resolvedFilePath);
+  const newFilePath = path.join(resolvedDirPath, fileName);
+
+  try {
+    const readStream = fs.createReadStream(resolvedFilePath);
+    const writeStream = fs.createWriteStream(newFilePath);
+
+    await pipeline(
+      readStream,
+      writeStream,
+    );
+  } catch {
+    errorHandler.log(ERRORS.OPERATION_FAILED);
+  }
+}
+
 const checkIsValidFileName = (fileName) => {
   const regex = /^[^.\/][^\/]*\.[a-zA-Z0-9]+$/i;
 
@@ -91,4 +126,5 @@ export default {
   cat,
   add,
   rename,
+  copy,
 };

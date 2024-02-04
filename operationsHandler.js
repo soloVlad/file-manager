@@ -12,6 +12,7 @@ const operations = {
   CAT: 'cat',
   ADD: 'add',
   RENAME: 'rn',
+  COPY: 'cp',
 };
 
 const start = async () => {
@@ -104,6 +105,15 @@ const handleInput = async (inputString) => {
       }
 
       await extfs.rename(parts[1], parts[2]);
+      break;
+
+    case operations.COPY:
+      if (!checkEnoughArgs(parts, 3)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await extfs.copy(parts[1], parts[2]);
       break;
   }
 }
