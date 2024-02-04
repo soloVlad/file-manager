@@ -4,6 +4,7 @@ import errorHandler, { ERRORS } from "./errorHandler.js";
 import { cli } from "./cli.js";
 import extfs from "./extfs.js";
 import os from "./os.js";
+import zip from "./zip.js";
 
 const operations = {
   EXIT: '.exit',
@@ -18,6 +19,8 @@ const operations = {
   MOVE: 'mv',
   OS: 'os',
   HASH: 'hash',
+  COMPRESS: 'compress',
+  DECOMPRESS: 'decompress',
 };
 
 const start = async () => {
@@ -155,6 +158,24 @@ const handleInput = async (inputString) => {
       }
 
       await extfs.hash(parts[1]);
+      break;
+
+    case operations.COMPRESS:
+      if (!checkEnoughArgs(parts, 3)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await zip.compress(parts[1], parts[2]);
+      break;
+
+    case operations.DECOMPRESS:
+      if (!checkEnoughArgs(parts, 3)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await zip.decompress(parts[1], parts[2]);
       break;
   }
 }
