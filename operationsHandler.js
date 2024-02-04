@@ -14,6 +14,7 @@ const operations = {
   RENAME: 'rn',
   COPY: 'cp',
   REMOVE: 'rm',
+  MOVE: 'mv',
 };
 
 const start = async () => {
@@ -124,6 +125,15 @@ const handleInput = async (inputString) => {
       }
 
       await extfs.remove(parts[1]);
+      break;
+
+    case operations.MOVE:
+      if (!checkEnoughArgs(parts, 3)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await extfs.move(parts[1], parts[2]);
       break;
   }
 }

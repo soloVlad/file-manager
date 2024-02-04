@@ -86,18 +86,18 @@ const copy = async (filePath, newDirPath) => {
   const resolvedDirPath = pwd.resolve(newDirPath);
   const isFileExist = await pwd.exist(resolvedFilePath);
   const isDirExist = await pwd.exist(resolvedDirPath);
-  const isNewDir = path.dirname(resolvedFilePath) !== pwd.get();
+  const isNewDir = path.dirname(resolvedFilePath) !== resolvedDirPath;
 
   if (!isFileExist || !isDirExist || !isNewDir) {
     errorHandler.log(ERRORS.INVALID_INPUT);
-    return;
+    return 1;
   }
 
   const newDirPathType = await pwd.getPathType(resolvedDirPath);
 
   if (newDirPathType !== PATH_TYPES.DIRECTORY) {
     errorHandler.log(ERRORS.INVALID_INPUT);
-    return;
+    return 1;
   }
 
   const fileName = path.basename(resolvedFilePath);
@@ -111,8 +111,11 @@ const copy = async (filePath, newDirPath) => {
       readStream,
       writeStream,
     );
+
+    return 0;
   } catch {
     errorHandler.log(ERRORS.OPERATION_FAILED);
+    return 2;
   }
 }
 
@@ -139,6 +142,16 @@ const remove = async (filePath) => {
   }
 }
 
+const move = async (filePath, newDirPath) => {
+  const copyResultCode = await copy(filePath, newDirPath);
+
+  if (copyResultCode !== 0) {
+    return;
+  }
+
+  await remove(filePath);
+}
+
 const checkIsValidFileName = (fileName) => {
   const regex = /^[^.\/][^\/]*\.[a-zA-Z0-9]+$/i;
 
@@ -151,4 +164,5 @@ export default {
   rename,
   copy,
   remove,
+  move,
 };
