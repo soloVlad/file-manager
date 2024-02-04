@@ -154,39 +154,37 @@ const move = async (filePath, newDirPath) => {
 }
 
 const hash = async (filePath) => {
-  return new Promise((resolve) => {
-    (async () => {
-      const resolvedFilePath = pwd.resolve(filePath);
-      const isFileExist = await pwd.exist(resolvedFilePath);
+  const resolvedFilePath = pwd.resolve(filePath);
+  const isFileExist = await pwd.exist(resolvedFilePath);
 
-      if (!isFileExist) {
-        errorHandler.log(ERRORS.INVALID_INPUT);
-        return resolve();
-      }
+  if (!isFileExist) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
 
-      const pathType = await pwd.getPathType(resolvedFilePath);
+  const pathType = await pwd.getPathType(resolvedFilePath);
 
-      if (pathType !== PATH_TYPES.FILE) {
-        errorHandler.log(ERRORS.INVALID_INPUT);
-        return resolve();
-      }
+  if (pathType !== PATH_TYPES.FILE) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
 
-      try {
-        const hash = createHash('sha256');
-        const readStream = fs.createReadStream(resolvedFilePath);
+  try {
+    const hash = createHash('sha256');
+    const readStream = fs.createReadStream(resolvedFilePath);
 
-        readStream.on('data', data => hash.update(data));
-        readStream.on('end', () => {
-          const digest = hash.digest('hex');
-          console.log(digest);
-          resolve();
-        })
-      } catch {
-        errorHandler.log(ERRORS.OPERATION_FAILED);
+    readStream.on('data', data => hash.update(data));
+
+    await new Promise((resolve) => {
+      readStream.on('end', () => {
+        const digest = hash.digest('hex');
+        console.log(digest);
         resolve();
-      }
-    })();
-  })
+      })
+    })
+  } catch {
+    errorHandler.log(ERRORS.OPERATION_FAILED);
+  }
 }
 
 const checkIsValidFileName = (fileName) => {
