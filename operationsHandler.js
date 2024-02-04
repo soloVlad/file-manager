@@ -17,6 +17,7 @@ const operations = {
   REMOVE: 'rm',
   MOVE: 'mv',
   OS: 'os',
+  HASH: 'hash',
 };
 
 const start = async () => {
@@ -145,6 +146,15 @@ const handleInput = async (inputString) => {
       }
 
       await os.handleOSOperation(parts[1]);
+      break;
+
+    case operations.HASH:
+      if (!checkEnoughArgs(parts, 2)) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        break;
+      }
+
+      await extfs.hash(parts[1]);
       break;
   }
 }

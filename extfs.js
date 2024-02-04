@@ -2,6 +2,7 @@ import fs from 'fs';
 import { pipeline } from 'stream/promises';
 import { Writable } from 'stream';
 import path from 'path';
+import { createHash } from 'crypto';
 
 import pwd, { PATH_TYPES } from './pwd.js';
 import errorHandler, { ERRORS } from './errorHandler.js';
@@ -152,6 +153,42 @@ const move = async (filePath, newDirPath) => {
   await remove(filePath);
 }
 
+const hash = async (filePath) => {
+  return new Promise((resolve) => {
+    (async () => {
+      const resolvedFilePath = pwd.resolve(filePath);
+      const isFileExist = await pwd.exist(resolvedFilePath);
+
+      if (!isFileExist) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        return resolve();
+      }
+
+      const pathType = await pwd.getPathType(resolvedFilePath);
+
+      if (pathType !== PATH_TYPES.FILE) {
+        errorHandler.log(ERRORS.INVALID_INPUT);
+        return resolve();
+      }
+
+      try {
+        const hash = createHash('sha256');
+        const readStream = fs.createReadStream(resolvedFilePath);
+
+        readStream.on('data', data => hash.update(data));
+        readStream.on('end', () => {
+          const digest = hash.digest('hex');
+          console.log(digest);
+          resolve();
+        })
+      } catch {
+        errorHandler.log(ERRORS.OPERATION_FAILED);
+        resolve();
+      }
+    })();
+  })
+}
+
 const checkIsValidFileName = (fileName) => {
   const regex = /^[^.\/][^\/]*\.[a-zA-Z0-9]+$/i;
 
@@ -165,4 +202,5 @@ export default {
   copy,
   remove,
   move,
+  hash,
 };
