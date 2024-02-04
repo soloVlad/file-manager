@@ -116,6 +116,29 @@ const copy = async (filePath, newDirPath) => {
   }
 }
 
+const remove = async (filePath) => {
+  const resolvedFilePath = pwd.resolve(filePath);
+  const isFileExist = await pwd.exist(resolvedFilePath);
+
+  if (!isFileExist) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
+  const pathType = await pwd.getPathType(resolvedFilePath);
+
+  if (pathType !== PATH_TYPES.FILE) {
+    errorHandler.log(ERRORS.INVALID_INPUT);
+    return;
+  }
+
+  try {
+    await fs.promises.unlink(resolvedFilePath);
+  } catch {
+    errorHandler.log(ERRORS.OPERATION_FAILED);
+  }
+}
+
 const checkIsValidFileName = (fileName) => {
   const regex = /^[^.\/][^\/]*\.[a-zA-Z0-9]+$/i;
 
@@ -127,4 +150,5 @@ export default {
   add,
   rename,
   copy,
+  remove,
 };
